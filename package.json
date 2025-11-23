@@ -15,9 +15,8 @@
     "type": "commonjs",
     "main": "index.js",
     "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1",
-        "build": "cd frontend && npm install && npm run build && cd .. && cp -r frontend/dist backend/",
-        "start": "cd backend && npm install && node src/app.js",
-        "production": "npm run build && npm run start"
+        "build": "cd frontend && npm run build && cd .. && cp -r frontend/dist backend/",
+        "install": "cd backend && npm install && cd .. && cd frontend && npm install",
+        "production": "npm run install && npm run build && cd backend && npm run start"
     }
 }
