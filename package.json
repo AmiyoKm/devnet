@@ -17,7 +17,7 @@
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
         "build": "cd frontend && npm install && npm run build && cd .. && cp -r frontend/dist backend/",
-        "start": "cd backend && npm install && npm run start",
+        "start": "cd backend && npm install && node src/app.js",
         "production": "npm run build && npm run start"
     }
 }
