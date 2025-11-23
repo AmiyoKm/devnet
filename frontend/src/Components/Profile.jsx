@@ -6,7 +6,7 @@ const Profile = () => {
 
     return (
         user && (
-            <div className="min-h-screen pt-10 pb-20 px-4">
+            <div className="min-h-screen bg-background flex justify-center items-center py-10 px-4">
                 <EditProfile user={user} />
             </div>
         )

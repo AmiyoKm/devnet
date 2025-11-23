@@ -34,7 +34,9 @@ function App() {
         <>
             <Provider store={appStore}>
                 <BrowserRouter basename="/">
-                    <AppContent />
+                    <div className="min-h-screen bg-background text-text overflow-x-hidden">
+                        <AppContent />
+                    </div>
                 </BrowserRouter>
             </Provider>
         </>

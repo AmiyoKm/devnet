@@ -33,13 +33,13 @@ const Feed = () => {
             <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="flex justify-center items-center h-[60vh] text-center"
+                className="flex justify-center items-center h-[80vh] text-center px-4"
             >
-                <div className="glass p-8 rounded-2xl max-w-md">
-                    <h1 className="text-2xl font-bold text-gray-300 mb-2">
+                <div className="glass p-10 rounded-3xl max-w-md border border-white/10 bg-slate-900/40 backdrop-blur-xl shadow-2xl">
+                    <h1 className="text-3xl font-bold text-slate-200 mb-3">
                         No new users found!
                     </h1>
-                    <p className="text-gray-500">
+                    <p className="text-slate-400 text-lg">
                         Check back later for more connections.
                     </p>
                 </div>
@@ -47,7 +47,7 @@ const Feed = () => {
         );
 
     return (
-        <div className="flex justify-center items-center min-h-[80vh] relative overflow-hidden">
+        <div className="flex justify-center items-center min-h-[85vh] relative overflow-hidden py-10">
             <AnimatePresence>
                 {feed.map((user, index) => (
                     <UserCard key={user._id} user={user} index={index} />

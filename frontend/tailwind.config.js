@@ -6,11 +6,12 @@ export default {
     theme: {
         extend: {
             colors: {
-                primary: "#00f2ea", // Neon Cyan
-                secondary: "#ff0055", // Neon Pink
-                background: "#0f172a", // Deep Blue/Black
-                surface: "rgba(255, 255, 255, 0.1)", // Glassmorphism
-                text: "#e2e8f0", // Light Gray
+                primary: "#8b5cf6", // Violet 500
+                secondary: "#06b6d4", // Cyan 500
+                accent: "#f43f5e", // Rose 500
+                background: "#020617", // Slate 950
+                surface: "rgba(15, 23, 42, 0.8)", // Slate 900/80
+                text: "#f8fafc", // Slate 50
             },
             fontFamily: {
                 sans: ["Inter", "sans-serif"],
@@ -20,6 +21,6 @@ export default {
     },
     plugins: [daisyui],
     daisyui: {
-        themes: ["dark"], // Force dark mode
+        themes: ["dark"],
     },
 };

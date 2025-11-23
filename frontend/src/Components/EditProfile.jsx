@@ -1,10 +1,11 @@
 import axios from "axios";
-import { motion } from "framer-motion";
-import { Briefcase, Calendar, Info, MapPin, Save, User } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
+import { Camera, User, X } from "lucide-react";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { BASE_URL } from "../utils/constants";
 import { addUser } from "../utils/userSlice";
+import UserCard from "./UserCard";
 
 const EditProfile = ({ user }) => {
     const [firstName, setFirstName] = useState(user.firstName);
@@ -13,11 +14,22 @@ const EditProfile = ({ user }) => {
     const [age, setAge] = useState(user.age || "");
     const [gender, setGender] = useState(user.gender || "");
     const [about, setAbout] = useState(user.about || "");
-    const [skill, setSkill] = useState(user.skill || "");
+    const [skill, setSkill] = useState(user.skill || []);
+    const [newSkill, setNewSkill] = useState("");
     const [error, setError] = useState("");
-    const [success, setSuccess] = useState(false);
-
+    const [success, setSuccess] = useState("");
     const dispatch = useDispatch();
+
+    const handleAddSkill = () => {
+        if (newSkill.trim() && !skill.includes(newSkill.trim())) {
+            setSkill([...skill, newSkill.trim()]);
+            setNewSkill("");
+        }
+    };
+
+    const handleRemoveSkill = (skillToRemove) => {
+        setSkill(skill.filter((s) => s !== skillToRemove));
+    };
 
     const saveProfile = async () => {
         try {
@@ -27,179 +39,259 @@ const EditProfile = ({ user }) => {
                 { withCredentials: true }
             );
             dispatch(addUser(res.data.data));
-            setSuccess(true);
-            setTimeout(() => setSuccess(false), 3000);
+            setSuccess("Profile updated successfully!");
+            setTimeout(() => setSuccess(""), 3000);
         } catch (err) {
             setError(err.response?.data || "Something went wrong");
+            setTimeout(() => setError(""), 3000);
         }
     };
 
     return (
-        <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="max-w-4xl mx-auto"
-        >
-            <div className="card glass border border-white/10 overflow-hidden">
-                {/* Header Banner */}
-                <div className="h-48 bg-gradient-to-r from-primary/20 to-secondary/20 relative">
-                    <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-20"></div>
-                </div>
-
-                <div className="card-body px-8 -mt-20">
-                    {/* Profile Photo Section */}
-                    <div className="flex flex-col md:flex-row gap-8 items-start">
-                        <div className="relative group">
-                            <div className="w-40 h-40 rounded-2xl overflow-hidden border-4 border-gray-900 shadow-2xl">
-                                <img
-                                    src={photoUrl}
-                                    alt="Profile"
-                                    className="w-full h-full object-cover"
-                                />
+        <div className="flex justify-center my-10 w-full max-w-4xl mx-auto">
+            <div className="flex flex-col md:flex-row gap-8 w-full">
+                {/* Edit Form Section */}
+                <motion.div
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.5 }}
+                    className="card glass flex-1 border border-white/10 bg-slate-900/60 backdrop-blur-2xl shadow-2xl rounded-3xl overflow-hidden"
+                >
+                    <div className="card-body p-8">
+                        <div className="flex items-center gap-3 mb-6">
+                            <div className="p-3 bg-primary/10 rounded-xl">
+                                <User size={24} className="text-primary" />
                             </div>
-                            <div className="absolute -bottom-2 -right-2 bg-gray-900 p-2 rounded-lg border border-white/10">
-                                <User className="text-primary" size={20} />
-                            </div>
-                        </div>
-
-                        <div className="flex-1 pt-20 md:pt-0 md:mt-20">
-                            <h2 className="text-3xl font-bold text-white">
-                                {firstName} {lastName}
+                            <h2 className="text-2xl font-bold text-slate-200">
+                                Edit Profile
                             </h2>
-                            <p className="text-gray-400 flex items-center gap-2 mt-1">
-                                <Briefcase size={16} />
-                                Full Stack Developer
-                            </p>
+                        </div>
+
+                        <div className="space-y-5">
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="form-control">
+                                    <label className="label pb-1">
+                                        <span className="label-text text-slate-400 font-medium">
+                                            First Name
+                                        </span>
+                                    </label>
+                                    <input
+                                        type="text"
+                                        value={firstName}
+                                        onChange={(e) =>
+                                            setFirstName(e.target.value)
+                                        }
+                                        className="input input-bordered w-full bg-slate-950/50 border-white/10 focus:border-primary focus:ring-1 focus:ring-primary/50 text-white rounded-xl h-12"
+                                    />
+                                </div>
+                                <div className="form-control">
+                                    <label className="label pb-1">
+                                        <span className="label-text text-slate-400 font-medium">
+                                            Last Name
+                                        </span>
+                                    </label>
+                                    <input
+                                        type="text"
+                                        value={lastName}
+                                        onChange={(e) =>
+                                            setLastName(e.target.value)
+                                        }
+                                        className="input input-bordered w-full bg-slate-950/50 border-white/10 focus:border-primary focus:ring-1 focus:ring-primary/50 text-white rounded-xl h-12"
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="form-control">
+                                <label className="label pb-1">
+                                    <span className="label-text text-slate-400 font-medium">
+                                        Photo URL
+                                    </span>
+                                </label>
+                                <div className="relative">
+                                    <Camera
+                                        className="absolute left-4 top-3.5 text-slate-500"
+                                        size={20}
+                                    />
+                                    <input
+                                        type="text"
+                                        value={photoUrl}
+                                        onChange={(e) =>
+                                            setPhotoUrl(e.target.value)
+                                        }
+                                        className="input input-bordered w-full pl-12 bg-slate-950/50 border-white/10 focus:border-primary focus:ring-1 focus:ring-primary/50 text-white rounded-xl h-12"
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="form-control">
+                                    <label className="label pb-1">
+                                        <span className="label-text text-slate-400 font-medium">
+                                            Age
+                                        </span>
+                                    </label>
+                                    <input
+                                        type="number"
+                                        value={age}
+                                        onChange={(e) => setAge(e.target.value)}
+                                        className="input input-bordered w-full bg-slate-950/50 border-white/10 focus:border-primary focus:ring-1 focus:ring-primary/50 text-white rounded-xl h-12"
+                                    />
+                                </div>
+                                <div className="form-control">
+                                    <label className="label pb-1">
+                                        <span className="label-text text-slate-400 font-medium">
+                                            Gender
+                                        </span>
+                                    </label>
+                                    <select
+                                        value={gender}
+                                        onChange={(e) =>
+                                            setGender(e.target.value)
+                                        }
+                                        className="select select-bordered w-full bg-slate-950/50 border-white/10 focus:border-primary focus:ring-1 focus:ring-primary/50 text-white rounded-xl h-12"
+                                    >
+                                        <option value="" disabled>
+                                            Select Gender
+                                        </option>
+                                        <option value="male">Male</option>
+                                        <option value="female">Female</option>
+                                        <option value="other">Other</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div className="form-control">
+                                <label className="label pb-1">
+                                    <span className="label-text text-slate-400 font-medium">
+                                        About
+                                    </span>
+                                </label>
+                                <textarea
+                                    value={about}
+                                    onChange={(e) => setAbout(e.target.value)}
+                                    className="textarea textarea-bordered h-32 bg-slate-950/50 border-white/10 focus:border-primary focus:ring-1 focus:ring-primary/50 text-white rounded-xl resize-none leading-relaxed"
+                                    placeholder="Tell us about yourself..."
+                                ></textarea>
+                            </div>
+
+                            <div className="form-control">
+                                <label className="label pb-1">
+                                    <span className="label-text text-slate-400 font-medium">
+                                        Skills
+                                    </span>
+                                </label>
+                                <div className="flex gap-2 mb-2">
+                                    <input
+                                        type="text"
+                                        value={newSkill}
+                                        onChange={(e) =>
+                                            setNewSkill(e.target.value)
+                                        }
+                                        onKeyDown={(e) =>
+                                            e.key === "Enter" &&
+                                            handleAddSkill()
+                                        }
+                                        placeholder="Add a skill (e.g., React, Node.js)"
+                                        className="input input-bordered w-full bg-slate-950/50 border-white/10 focus:border-primary focus:ring-1 focus:ring-primary/50 text-white rounded-xl h-12"
+                                    />
+                                    <button
+                                        onClick={handleAddSkill}
+                                        className="btn btn-primary px-6 rounded-xl"
+                                    >
+                                        Add
+                                    </button>
+                                </div>
+                                <div className="flex flex-wrap gap-2 min-h-[2rem]">
+                                    {skill.map((s, i) => (
+                                        <span
+                                            key={i}
+                                            className="badge badge-primary badge-lg gap-2 py-4 pl-4 pr-2 rounded-lg"
+                                        >
+                                            {s}
+                                            <button
+                                                onClick={() =>
+                                                    handleRemoveSkill(s)
+                                                }
+                                                className="btn btn-ghost btn-xs btn-circle text-white hover:bg-white/20"
+                                            >
+                                                <X size={14} />
+                                            </button>
+                                        </span>
+                                    ))}
+                                </div>
+                            </div>
+
+                            <div className="card-actions w-full justify-center">
+                                <motion.button
+                                    whileHover={{ scale: 1.02 }}
+                                    whileTap={{ scale: 0.98 }}
+                                    onClick={saveProfile}
+                                    className="btn btn-primary w-full bg-gradient-to-r from-primary to-secondary border-none text-white px-8 rounded-xl h-12 shadow-lg shadow-primary/20 hover:shadow-primary/40"
+                                >
+                                    Save Changes
+                                </motion.button>
+                            </div>
                         </div>
                     </div>
+                </motion.div>
 
-                    <div className="divider border-white/10"></div>
-
-                    {/* Form Grid */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
-                        <div className="form-control">
-                            <label className="label">
-                                <span className="label-text text-gray-300 flex items-center gap-2">
-                                    <User size={16} /> First Name
-                                </span>
-                            </label>
-                            <input
-                                type="text"
-                                value={firstName}
-                                onChange={(e) => setFirstName(e.target.value)}
-                                className="input input-bordered bg-black/20 border-white/10 focus:border-primary text-white"
-                            />
+                {/* Preview Section */}
+                <motion.div
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.5, delay: 0.2 }}
+                    className="flex-1 flex flex-col items-center"
+                >
+                    <div className="w-full max-w-sm sticky top-24">
+                        <div className="mb-4 flex items-center gap-2 text-slate-400 px-2">
+                            <span className="text-sm font-medium uppercase tracking-wider">
+                                Live Preview
+                            </span>
+                            <div className="h-px bg-white/10 flex-1" />
                         </div>
-
-                        <div className="form-control">
-                            <label className="label">
-                                <span className="label-text text-gray-300 flex items-center gap-2">
-                                    <User size={16} /> Last Name
-                                </span>
-                            </label>
-                            <input
-                                type="text"
-                                value={lastName}
-                                onChange={(e) => setLastName(e.target.value)}
-                                className="input input-bordered bg-black/20 border-white/10 focus:border-primary text-white"
-                            />
-                        </div>
-
-                        <div className="form-control">
-                            <label className="label">
-                                <span className="label-text text-gray-300 flex items-center gap-2">
-                                    <Calendar size={16} /> Age
-                                </span>
-                            </label>
-                            <input
-                                type="text"
-                                value={age}
-                                onChange={(e) => setAge(e.target.value)}
-                                className="input input-bordered bg-black/20 border-white/10 focus:border-primary text-white"
-                            />
-                        </div>
-
-                        <div className="form-control">
-                            <label className="label">
-                                <span className="label-text text-gray-300 flex items-center gap-2">
-                                    <MapPin size={16} /> Gender
-                                </span>
-                            </label>
-                            <input
-                                type="text"
-                                value={gender}
-                                onChange={(e) => setGender(e.target.value)}
-                                className="input input-bordered bg-black/20 border-white/10 focus:border-primary text-white"
-                            />
-                        </div>
-
-                        <div className="form-control md:col-span-2">
-                            <label className="label">
-                                <span className="label-text text-gray-300 flex items-center gap-2">
-                                    <Info size={16} /> About
-                                </span>
-                            </label>
-                            <textarea
-                                value={about}
-                                onChange={(e) => setAbout(e.target.value)}
-                                className="textarea textarea-bordered h-32 bg-black/20 border-white/10 focus:border-primary text-white"
-                            />
-                        </div>
-
-                        <div className="form-control">
-                            <label className="label">
-                                <span className="label-text text-gray-300 flex items-center gap-2">
-                                    <MapPin size={16} /> Skill
-                                </span>
-                            </label>
-                            <input
-                                type="text"
-                                value={skill.join(", ")}
-                                onChange={(e) =>
-                                    setSkill(e.target.value.split(", "))
-                                }
-                                className="input input-bordered bg-black/20 border-white/10 focus:border-primary text-white"
-                            />
-                        </div>
-
-                        <div className="form-control md:col-span-2">
-                            <label className="label">
-                                <span className="label-text text-gray-300">
-                                    Photo URL
-                                </span>
-                            </label>
-                            <input
-                                type="text"
-                                value={photoUrl}
-                                onChange={(e) => setPhotoUrl(e.target.value)}
-                                className="input input-bordered bg-black/20 border-white/10 focus:border-primary text-white"
-                            />
-                        </div>
+                        <UserCard
+                            user={{
+                                firstName,
+                                lastName,
+                                photoUrl,
+                                age,
+                                gender,
+                                about,
+                                skill,
+                            }}
+                        />
                     </div>
-
-                    {error && (
-                        <p className="text-red-400 text-center mt-4">{error}</p>
-                    )}
-                    {success && (
-                        <p className="text-green-400 text-center mt-4">
-                            Profile updated successfully!
-                        </p>
-                    )}
-
-                    <div className="card-actions justify-end mt-8">
-                        <motion.button
-                            whileHover={{ scale: 1.02 }}
-                            whileTap={{ scale: 0.98 }}
-                            className="btn btn-primary px-8 gap-2"
-                            onClick={saveProfile}
-                        >
-                            <Save size={18} />
-                            Save Changes
-                        </motion.button>
-                    </div>
-                </div>
+                </motion.div>
             </div>
-        </motion.div>
+
+            {/* Toast Notifications */}
+            <AnimatePresence>
+                {success && (
+                    <motion.div
+                        initial={{ opacity: 0, y: 50 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: 50 }}
+                        className="toast toast-bottom toast-center z-50"
+                    >
+                        <div className="alert alert-success bg-emerald-500/20 border-emerald-500/50 text-emerald-200 backdrop-blur-md shadow-xl">
+                            <span>{success}</span>
+                        </div>
+                    </motion.div>
+                )}
+                {error && (
+                    <motion.div
+                        initial={{ opacity: 0, y: 50 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: 50 }}
+                        className="toast toast-bottom toast-center z-50"
+                    >
+                        <div className="alert alert-error bg-rose-500/20 border-rose-500/50 text-rose-200 backdrop-blur-md shadow-xl">
+                            <span>{error}</span>
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+        </div>
     );
 };
 
