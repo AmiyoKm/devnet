@@ -2,6 +2,8 @@ const express = require("express");
 const connectDB = require("./config/database");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
+const fs = require("fs");
+const path = require("path");
 const http = require("http");
 
 const app = express();
@@ -20,12 +22,19 @@ const profileRouter = require("./routes/profile");
 const connectionRouter = require("./routes/connnection");
 const userRouter = require("./routes/user");
 
-app.use("/auth", authRouter);
-app.use("/profile", profileRouter);
-app.use("/connection", connectionRouter);
-app.use("/user", userRouter);
+app.use("/api/auth", authRouter);
+app.use("/api/profile", profileRouter);
+app.use("/api/connection", connectionRouter);
+app.use("/api/user", userRouter);
 
 const server = http.createServer(app);
+
+const frontendDir = "../dist";
+
+app.use(express.static(path.join(__dirname, frontendDir)));
+app.get(/(.*)/, (req, res) => {
+    res.sendFile(path.join(__dirname, frontendDir, "index.html"));
+});
 
 connectDB()
     .then(() => {
