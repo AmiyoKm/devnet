@@ -22,10 +22,10 @@ const profileRouter = require("./routes/profile");
 const connectionRouter = require("./routes/connnection");
 const userRouter = require("./routes/user");
 
-app.use("/api/auth", authRouter);
-app.use("/api/profile", profileRouter);
-app.use("/api/connection", connectionRouter);
-app.use("/api/user", userRouter);
+app.use("/auth", authRouter);
+app.use("/profile", profileRouter);
+app.use("/connection", connectionRouter);
+app.use("/user", userRouter);
 
 const server = http.createServer(app);
 
