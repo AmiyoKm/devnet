@@ -29,12 +29,12 @@ app.use("/api/user", userRouter);
 
 const server = http.createServer(app);
 
-const frontendDir = "../dist";
+// const frontendDir = "../dist";
 
-app.use(express.static(path.join(__dirname, frontendDir)));
-app.get(/(.*)/, (req, res) => {
-	res.sendFile(path.join(__dirname, frontendDir, "index.html"));
-});
+// app.use(express.static(path.join(__dirname, frontendDir)));
+// app.get(/(.*)/, (req, res) => {
+// 	res.sendFile(path.join(__dirname, frontendDir, "index.html"));
+// });
 
 connectDB()
 	.then(() => {
