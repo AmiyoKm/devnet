@@ -9,10 +9,10 @@ const http = require("http");
 const app = express();
 
 app.use(
-    cors({
-        origin: "http://localhost:5173",
-        credentials: true,
-    })
+	cors({
+		origin: "http://localhost:5173",
+		credentials: true,
+	}),
 );
 app.use(express.json());
 app.use(cookieParser());
@@ -33,20 +33,20 @@ const frontendDir = "../dist";
 
 app.use(express.static(path.join(__dirname, frontendDir)));
 app.get(/(.*)/, (req, res) => {
-    res.sendFile(path.join(__dirname, frontendDir, "index.html"));
+	res.sendFile(path.join(__dirname, frontendDir, "index.html"));
 });
 
 connectDB()
-    .then(() => {
-        console.log("Database connection established...");
-        server.listen(process.env.PORT || 3000, () => {
-            console.log(
-                `Server is successfully listening on port ${
-                    process.env.PORT || 3000
-                }...`
-            );
-        });
-    })
-    .catch((err) => {
-        console.error("Database cannot be connected!!, err: ", err);
-    });
+	.then(() => {
+		console.log("Database connection established...");
+		server.listen(process.env.PORT || 3000, () => {
+			console.log(
+				`Server is successfully listening on port ${process.env.PORT || 3000}...`,
+			);
+		});
+	})
+	.catch((err) => {
+		console.error("Database cannot be connected!!, err: ", err);
+	});
+
+module.exports = app;
